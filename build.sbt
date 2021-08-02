@@ -4,14 +4,17 @@ import sbt._
 val buildScalaVersion = "2.12.3"
 val buildCrossScalaVersions = Seq(buildScalaVersion) // Seq("2.11.11", "2.12.2")
 
-val baseSettings = _root_.bintray.BintrayPlugin.bintrayPublishSettings ++ Seq(
+val owner = "eidolon-llc"
+val repo = "webby"
+
+val baseSettings =  Seq(
   organization := "com.github.citrum.webby",
   version := "0.7.9.4",
 
   incOptions := incOptions.value.withNameHashing(nameHashing = true),
   resolvers ++= Seq(
     "zeroturnaround repository" at "https://repos.zeroturnaround.com/nexus/content/repositories/zt-public/", // The zeroturnaround.com repository
-    Resolver.bintrayRepo("citrum", "maven") // Repo for querio
+    "GitHub Package Registry eidolon-llc" at "https://maven.pkg.github.com/eidolon-llc/_"
   ),
 
   sources in doc in Compile := List(), // Disable generation JavaDoc, ScalaDoc
@@ -22,8 +25,9 @@ val baseSettings = _root_.bintray.BintrayPlugin.bintrayPublishSettings ++ Seq(
   startYear := Some(2016),
   homepage := Some(url("https://github.com/citrum/webby")),
   licenses += ("Apache-2.0", url("https://www.apache.org/licenses/LICENSE-2.0.html")),
-  bintrayVcsUrl := Some("https://github.com/citrum/webby"),
-  bintrayOrganization := Some("citrum")
+  publishTo := Some("GitHub Package Registry" at s"https://maven.pkg.github.com/$owner/$repo"),
+  scmInfo := Some(ScmInfo(url(s"https://github.com/$owner/$repo"), s"scm:git@github.com:$owner/$repo.git")),
+  publishMavenStyle := true
 )
 
 val commonSettings = baseSettings ++ Seq(
@@ -126,20 +130,19 @@ val haxeTestWithNpmInstall = taskKey[Unit]("run haxeTest with npm install")
 lazy val webbyHaxeTest: Project = Project(
   "webby-haxe-test",
   file("webby-haxe-test"),
-  settings = haxeIdeaSettings ++ makeSourceDirs() ++ Seq(
+  settings = makeSourceDirs() ++ Seq(
     scalaVersion := buildScalaVersion,
     // Disable packaging & publishing artifact
     Keys.`package` := file(""),
     publishArtifact := false,
     publishLocal := {},
     publish := {},
-    bintrayUnpublish := {},
 
     npmInstallTask,
-    haxeTestWithNpmInstall := Def.sequential(npmInstall, haxeTest).value,
+    haxeTestWithNpmInstall := Def.sequential(npmInstall).value,
     test in Test := {val _ = haxeTestWithNpmInstall.value; (test in Test).value},
 
-    managedHaxeSourceSubDirs in Test ++= (unmanagedResourceDirectories in Compile in webbyHaxe).value,
+    //managedHaxeSourceSubDirs in Test ++= (unmanagedResourceDirectories in Compile in webbyHaxe).value,
 
     libraryDependencies += "com.google.javascript" % "closure-compiler" % "v20170124" exclude("com.google.guava", "guava"), // Google Closure Compiler
     libraryDependencies += "org.clojure" % "google-closure-library" % "0.0-20160609-f42b4a24" // Google Closure Library
@@ -214,7 +217,6 @@ lazy val root = Project(
     publishArtifact := false,
     publishLocal := {},
     publish := {},
-    bintrayUnpublish := {},
 
     // Наводим красоту в командной строке sbt
     shellPrompt := {state: State => "[" + scala.Console.GREEN + "webby" + scala.Console.RESET + "] "}

@@ -9,7 +9,7 @@ val repo = "webby"
 
 val baseSettings =  Seq(
   organization := "com.github.citrum.webby",
-  version := "0.7.9.4",
+  version := "0.7.9.5",
 
   incOptions := incOptions.value.withNameHashing(nameHashing = true),
   resolvers ++= Seq(
@@ -48,7 +48,7 @@ val commonDependencies = {
   deps += "org.apache.commons" % "commons-text" % "1.1"
   deps += "com.google.guava" % "guava" % "21.0"
   deps += "com.google.code.findbugs" % "jsr305" % "3.0.1" // @Nonnull, @Nullable annotation support
-  deps += "commons-io" % "commons-io" % "2.5" // Contains useful classes like FileUtils
+  deps += "commons-io" % "commons-io" % "2.7" // Contains useful classes like FileUtils
 
   // Tests
   deps += "org.scalatest" %% "scalatest" % "3.0.1" % "test"
@@ -56,7 +56,7 @@ val commonDependencies = {
 
   deps.result()
 }
-val querio = "com.github.citrum.querio" %% "querio" % "0.7.0" // querio orm
+val querio = "com.github.citrum.querio" %% "querio" % "0.7.1" // querio orm
 
 /**
   * Создать список настроек, задающих стандартные пути исходников, ресурсов, тестов для проекта.
@@ -163,7 +163,7 @@ lazy val webby: Project = Project(
       deps += "org.slf4j" % "jul-to-slf4j" % "1.7.25"
       deps += "org.slf4j" % "jcl-over-slf4j" % "1.7.25"
 
-      deps += "io.netty" % "netty-all" % "4.1.13.Final"
+      deps += "io.netty" % "netty-all" % "4.1.44.Final"
 
       deps += "com.typesafe" % "config" % "1.3.1"
 
